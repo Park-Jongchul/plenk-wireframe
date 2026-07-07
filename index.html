@@ -1,391 +1,839 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>플렌K 웹 화면설계서 v1.0</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>플렌K - 한국 여행 일정 추천</title>
 <style>
 :root{
-  --bg:#f5f6fa; --paper:#fff; --ink:#111827; --muted:#6b7280; --line:#d7dce5;
-  --blue:#2563eb; --blue2:#eff6ff; --green:#10b981; --red:#ef4444; --yellow:#f59e0b;
-  --figma:#0f172a; --chip:#eef2ff;
+  --primary:#2563eb;--primary-hover:#1d4ed8;--primary-light:#eff6ff;--primary-border:#bfdbfe;
+  --text:#111827;--muted:#6b7280;--light:#9ca3af;--border:#e5e7eb;--bg:#f9fafb;--white:#fff;
+  --success:#10b981;--error:#ef4444;
+  --r-sm:8px;--r:12px;--r-lg:16px;
+  --shadow:0 4px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 28px rgba(0,0,0,.12);
 }
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);font-family:Arial,"Noto Sans KR",sans-serif;color:var(--ink)}
-.top{position:sticky;top:0;z-index:10;background:#111827;color:white;padding:14px 28px;display:flex;justify-content:space-between;align-items:center}
-.top b{font-size:20px}.top span{font-size:13px;color:#d1d5db}
-.wrap{display:grid;grid-template-columns:260px 1fr;gap:0}
-.nav{position:sticky;top:54px;height:calc(100vh - 54px);overflow:auto;background:#fff;border-right:1px solid var(--line);padding:18px}
-.nav a{display:block;text-decoration:none;color:#374151;padding:9px 10px;border-radius:8px;font-size:14px}
-.nav a:hover{background:#f3f4f6;color:#111827}.nav h4{margin:18px 0 8px;color:#6b7280;font-size:12px}
-.main{padding:28px;max-width:1500px}
-.page{background:var(--paper);border:1px solid var(--line);border-radius:18px;margin:0 0 26px;padding:24px;box-shadow:0 8px 24px rgba(15,23,42,.06)}
-.cover{height:580px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:linear-gradient(135deg,#fff,#eef2ff)}
-.cover h1{font-size:54px;margin:0 0 12px}.cover h2{font-size:24px;font-weight:500;color:#374151}.cover .meta{margin-top:50px;color:#6b7280}
-h1,h2,h3{margin:0 0 14px} h2{font-size:24px;border-bottom:2px solid #eef2f7;padding-bottom:10px}
-.grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;align-items:start}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.box{border:1px solid var(--line);border-radius:14px;background:#fff;padding:16px}
-.box.blue{background:var(--blue2);border-color:#bfdbfe}.box.gray{background:#f9fafb}
-.table{width:100%;border-collapse:collapse;font-size:13px}.table th{background:#f3f4f6;text-align:left}.table th,.table td{border:1px solid var(--line);padding:9px;vertical-align:top}
-.flow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.node{padding:12px 16px;border:1px solid #bfdbfe;background:#eff6ff;border-radius:12px;font-weight:700}.arrow{color:#6b7280}
-.screen{border:2px solid #111827;border-radius:20px;background:#fff;width:430px;margin:auto;overflow:hidden;box-shadow:0 12px 28px rgba(0,0,0,.08)}
-.screen.web{width:650px;border-radius:16px}
-.header{height:54px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:#fff}
-.logo{font-weight:800;color:#2563eb}.hero{padding:36px 24px;text-align:center;background:linear-gradient(180deg,#eff6ff,#fff)}
-.hero h3{font-size:26px}.btn{display:inline-block;background:#2563eb;color:#fff;padding:12px 26px;border-radius:12px;font-weight:700;margin:10px 0}.btn.gray{background:#e5e7eb;color:#111827}.btn.out{background:#fff;color:#2563eb;border:1px solid #2563eb}
-.content{padding:20px}.field{border:1px solid var(--line);border-radius:10px;padding:13px;margin:10px 0;background:#fff;display:flex;justify-content:space-between;align-items:center;color:#374151}.label{font-size:12px;color:#6b7280;margin-bottom:3px}
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.card{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff;text-align:center;min-height:74px}.card.big{text-align:left;min-height:110px}
-.num{display:inline-flex;align-items:center;justify-content:center;width:23px;height:23px;border-radius:50%;background:#ef4444;color:white;font-size:12px;font-weight:800;margin-right:5px}
-.pin{position:absolute;background:#ef4444;color:white;border-radius:50%;width:24px;height:24px;text-align:center;line-height:24px;font-weight:bold;font-size:12px}
-.spec h3{color:#1f2937;font-size:18px}.spec-item{border-left:4px solid #2563eb;background:#f8fafc;padding:10px 12px;margin:9px 0;border-radius:8px;font-size:13px;line-height:1.5}.tag{display:inline-block;background:#eef2ff;color:#3730a3;border-radius:999px;padding:3px 8px;font-size:12px;margin:2px}
-.wire-wrap{position:relative}
-.small{font-size:12px;color:#6b7280}.mono{font-family:Consolas,monospace;background:#f3f4f6;border-radius:8px;padding:10px;font-size:12px;white-space:pre-wrap}
-.day{border:1px solid var(--line);border-radius:12px;margin:10px 0;padding:12px}.place{display:grid;grid-template-columns:64px 1fr auto;gap:10px;align-items:center;border-top:1px solid #eef2f7;padding:10px 0}.thumb{width:64px;height:52px;border-radius:8px;background:#dbeafe}
-.footer{border-top:1px solid var(--line);height:48px;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:12px}
-@media print{.nav,.top{display:none}.wrap{display:block}.main{padding:0}.page{break-after:page;margin:0;border:0;border-radius:0;box-shadow:none}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Noto Sans KR',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+.app-header{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.logo{font-size:22px;font-weight:900;color:var(--primary);cursor:pointer;letter-spacing:-.5px}
+.header-nav{display:flex;align-items:center;gap:10px}
+.btn-text{background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;padding:8px 12px;border-radius:var(--r-sm);transition:.15s;font-family:inherit}
+.btn-text:hover{background:var(--bg);color:var(--text)}
+
+.main{padding-top:64px;min-height:100vh}
+.page{display:none}
+.page.active{display:block}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;height:48px;padding:0 24px;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;border:none;transition:.15s;font-family:inherit}
+.btn-primary{background:var(--primary);color:var(--white)}
+.btn-primary:hover{background:var(--primary-hover)}
+.btn-primary:disabled{background:#93c5fd;cursor:not-allowed}
+.btn-secondary{background:var(--white);color:var(--primary);border:1.5px solid var(--primary)}
+.btn-secondary:hover{background:var(--primary-light)}
+.btn-ghost{background:#f3f4f6;color:var(--text)}
+.btn-ghost:hover{background:#e5e7eb}
+.btn-danger{background:#fee2e2;color:var(--error)}
+.btn-danger:hover{background:#fecaca}
+.btn-sm{height:36px;padding:0 14px;font-size:13px}
+
+.form-group{margin-bottom:22px}
+.form-label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px}
+.input{width:100%;height:52px;border:1.5px solid var(--border);border-radius:var(--r);padding:0 16px;font-size:15px;color:var(--text);background:var(--white);transition:.15s;outline:none;font-family:inherit}
+.input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.textarea{width:100%;border:1.5px solid var(--border);border-radius:var(--r);padding:14px 16px;font-size:15px;color:var(--text);background:var(--white);resize:vertical;min-height:100px;outline:none;font-family:inherit;transition:.15s}
+.textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.error-msg{font-size:12px;color:var(--error);margin-top:5px;display:none}
+.error-msg.show{display:block}
+
+.counter{display:flex;align-items:center;gap:14px}
+.counter-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--white);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;line-height:1}
+.counter-btn:hover{border-color:var(--primary);color:var(--primary)}
+.counter-value{font-size:18px;font-weight:700;min-width:28px;text-align:center}
+
+.chip-group{display:flex;flex-wrap:wrap;gap:10px}
+.chip{padding:10px 18px;border:1.5px solid var(--border);border-radius:999px;font-size:14px;cursor:pointer;transition:.15s;background:var(--white);user-select:none}
+.chip:hover{border-color:var(--primary);color:var(--primary)}
+.chip.selected{background:var(--primary);color:var(--white);border-color:var(--primary)}
+
+.progress-bar{height:4px;background:#e5e7eb;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--primary);border-radius:2px;transition:width .4s ease}
+
+#toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);background:#1f2937;color:white;padding:14px 24px;border-radius:var(--r);font-size:14px;font-weight:500;opacity:0;transition:all .3s;z-index:1000;white-space:nowrap;pointer-events:none;box-shadow:var(--shadow-lg)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.success{background:#065f46}
+#toast.error{background:#7f1d1d}
+
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:16px}
+#modal-overlay.show{display:flex}
+#modal-box{background:var(--white);border-radius:var(--r-lg);padding:32px;max-width:380px;width:100%;text-align:center;box-shadow:var(--shadow-lg)}
+#modal-box h3{font-size:18px;margin-bottom:10px}
+#modal-box p{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:24px;white-space:pre-line}
+#modal-box .modal-actions{display:flex;gap:10px;justify-content:center}
+
+/* HOME */
+.hero{background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 55%,#7c3aed 100%);padding:100px 24px 90px;text-align:center;color:white}
+.hero h1{font-size:clamp(28px,5vw,52px);font-weight:900;line-height:1.2;margin-bottom:16px;letter-spacing:-1px}
+.hero p{font-size:18px;opacity:.85;margin-bottom:40px}
+.hero-btn{height:56px;padding:0 40px;font-size:17px;border-radius:14px;background:white;color:var(--primary);border:none;cursor:pointer;font-weight:800;transition:.15s;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.hero-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.section{max-width:1100px;margin:0 auto;padding:52px 24px}
+.section-title{font-size:22px;font-weight:800;margin-bottom:20px}
+.region-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.region-card{border-radius:var(--r-lg);height:160px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;cursor:pointer;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;color:white}
+.region-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.region-card h3{font-size:20px;font-weight:800;position:relative;z-index:1}
+.region-card p{font-size:12px;opacity:.85;position:relative;z-index:1;margin-top:2px}
+.region-card .re{position:absolute;top:18px;right:18px;font-size:32px;z-index:1}
+.region-card::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 65%)}
+
+/* STEPS */
+.step-container{max-width:620px;margin:0 auto;padding:36px 24px}
+.step-header{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+.back-btn{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--border);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text);transition:.15s;flex-shrink:0}
+.back-btn:hover{border-color:var(--primary);color:var(--primary)}
+.step-title{font-size:22px;font-weight:800}
+.step-subtitle{font-size:13px;color:var(--muted);margin-top:2px}
+.step-badge{margin-left:auto;font-size:13px;color:var(--muted);background:#f3f4f6;padding:4px 12px;border-radius:999px}
+.step-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:32px}
+
+.transport-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.transport-card{border:1.5px solid var(--border);border-radius:var(--r);padding:16px 20px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:12px;background:var(--white)}
+.transport-card:hover{border-color:var(--primary)}
+.transport-card.selected{border-color:var(--primary);background:var(--primary-light)}
+.transport-icon{font-size:26px}
+.transport-label{font-weight:700;font-size:15px}
+
+.budget-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.budget-card{border:1.5px solid var(--border);border-radius:var(--r);padding:18px 12px;cursor:pointer;transition:.15s;text-align:center;background:var(--white)}
+.budget-card:hover{border-color:var(--primary)}
+.budget-card.selected{border-color:var(--primary);background:var(--primary-light)}
+
+.people-box{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r)}
+.people-row{display:flex;justify-content:space-between;align-items:center;padding:14px 18px}
+.people-row+.people-row{border-top:1px solid var(--border)}
+.people-label{font-weight:600;font-size:15px}
+.people-sub{font-size:12px;color:var(--muted);margin-top:1px}
+
+/* GENERATING */
+.gen-container{max-width:480px;margin:80px auto;padding:24px;text-align:center}
+.gen-icon{font-size:72px;margin-bottom:24px;display:block;animation:float 2s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.gen-title{font-size:26px;font-weight:800;margin-bottom:12px}
+.gen-desc{color:var(--muted);font-size:15px;line-height:1.6;margin-bottom:36px}
+.gen-status{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:16px 20px;margin-bottom:20px;font-size:14px;color:var(--muted);display:flex;align-items:center;gap:12px}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* RESULT */
+.result-container{max-width:780px;margin:0 auto;padding:28px 24px}
+.result-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.result-title{font-size:26px;font-weight:900;letter-spacing:-.5px}
+.result-meta{font-size:13px;color:var(--muted);margin-top:5px;line-height:1.5}
+.result-actions{display:flex;gap:8px;flex-shrink:0}
+.day-section{margin-bottom:24px}
+.day-label{font-size:13px;font-weight:800;color:var(--primary);background:var(--primary-light);border:1px solid var(--primary-border);display:inline-block;padding:4px 14px;border-radius:999px;margin-bottom:14px}
+.place-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);display:flex;align-items:center;gap:14px;padding:14px 16px;margin-bottom:10px;transition:.15s;cursor:pointer}
+.place-card:hover{border-color:var(--primary);box-shadow:0 2px 12px rgba(37,99,235,.1)}
+.place-thumb{width:68px;height:56px;border-radius:var(--r-sm);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px}
+.place-info{flex:1;min-width:0}
+.place-name{font-size:15px;font-weight:700;margin-bottom:3px}
+.place-meta{font-size:12px;color:var(--muted)}
+.place-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* PLACE DETAIL */
+.detail-container{max-width:680px;margin:0 auto;padding:28px 24px}
+.page-top{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.page-top-title{font-size:20px;font-weight:800}
+.place-image{height:220px;border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;font-size:72px;margin-bottom:24px}
+.info-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);font-size:14px}
+.info-label{color:var(--muted);width:80px;flex-shrink:0;font-size:13px}
+
+/* EDIT */
+.edit-container{max-width:620px;margin:0 auto;padding:28px 24px}
+.edit-item{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:grab;transition:.15s}
+.edit-item:active{cursor:grabbing}
+.edit-item.dragging{opacity:.4;border-color:var(--primary)}
+.drag-handle{font-size:18px;color:var(--light);user-select:none;cursor:grab;flex-shrink:0}
+.edit-item-info{flex:1;min-width:0}
+.edit-item-name{font-weight:700;font-size:14px}
+.edit-item-time{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* SAVED */
+.saved-container{max-width:700px;margin:0 auto;padding:28px 24px}
+.saved-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:20px 24px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.saved-title{font-size:17px;font-weight:800;margin-bottom:4px}
+.saved-meta{font-size:13px;color:var(--muted)}
+.saved-actions{display:flex;gap:8px;flex-shrink:0}
+.empty-state{text-align:center;padding:80px 24px}
+.empty-icon{font-size:56px;margin-bottom:16px}
+.empty-title{font-size:20px;font-weight:700;margin-bottom:8px}
+.empty-desc{color:var(--muted);font-size:14px;margin-bottom:24px}
+
+@media(max-width:640px){
+  .hero{padding:70px 20px 60px}
+  .region-grid{grid-template-columns:repeat(2,1fr)}
+  .result-header{flex-direction:column}
+  .result-actions{width:100%;justify-content:flex-end}
+  .saved-card{flex-direction:column;align-items:flex-start}
+}
 </style>
 </head>
 <body>
-<div class="top"><b>플렌K 웹 화면설계서</b><span>Figma-style HTML Spec · v1.0 · 팀종철</span></div>
-<div class="wrap">
-<aside class="nav">
-  <h4>문서</h4>
-  <a href="#cover">표지</a><a href="#overview">프로젝트 개요</a><a href="#ia">IA</a><a href="#flow">User Flow</a>
-  <h4>화면설계</h4>
-  <a href="#web001">WEB-001 메인</a><a href="#web002">WEB-002 여행정보 입력 1</a><a href="#web003">WEB-003 여행정보 입력 2</a>
-  <a href="#web004">WEB-004 일정 생성</a><a href="#web005">WEB-005 일정 결과</a><a href="#web006">WEB-006 장소 상세</a>
-  <a href="#web007">WEB-007 일정 수정</a><a href="#web008">WEB-008 저장한 일정</a>
-  <h4>명세</h4><a href="#api">API 초안</a><a href="#validation">Validation</a><a href="#popup">Popup/Toast/Error</a><a href="#component">공통 컴포넌트</a>
-</aside>
+
+<header class="app-header">
+  <span class="logo" onclick="App.go('home')">플렌K</span>
+  <nav class="header-nav">
+    <button class="btn-text" onclick="App.go('saved')">저장한 일정</button>
+    <button class="btn btn-primary btn-sm" onclick="App.loginPrompt()">로그인</button>
+  </nav>
+</header>
+
 <main class="main">
 
-<section id="cover" class="page cover">
-  <h1>플렌K 화면설계서</h1>
-  <h2>한국 여행 일정 추천 서비스</h2>
-  <div class="meta">Version 1.0<br/>작성: 팀종철 · 대상: Web Front / Back-end 개발자</div>
-</section>
-
-<section id="overview" class="page">
-  <h2>1. 프로젝트 개요</h2>
-  <div class="grid2">
-    <div class="box blue">
-      <h3>프로젝트 목적</h3>
-      <p>사용자가 여행에 필요한 정보를 입력하면 여행 일정, 관광지, 맛집, 숙소, 이동 동선을 사용자의 취향에 맞게 추천하는 한국 여행 일정 추천 웹 서비스이다.</p>
-      <p>초기 개발 범위는 웹 브라우저 기준으로 하며, PC와 모바일 반응형 화면을 모두 고려한다.</p>
-    </div>
-    <div class="box">
-      <h3>주요 기능</h3>
-      <span class="tag">여행 정보 입력</span><span class="tag">일정 생성</span><span class="tag">장소 추천</span><span class="tag">일정 수정</span><span class="tag">저장</span><span class="tag">공유</span>
-    </div>
+<!-- WEB-001 HOME -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <h1>한국 여행 일정을<br>쉽고 빠르게 만들어보세요</h1>
+    <p>지역, 일정, 취향을 입력하면 맞춤 여행 코스를 추천합니다.</p>
+    <button class="hero-btn" onclick="App.go('step1')">여행 시작하기</button>
   </div>
-  <h3 style="margin-top:20px">화면 ID 규칙</h3>
-  <table class="table"><tr><th>Prefix</th><th>의미</th><th>예시</th></tr>
-  <tr><td>WEB</td><td>사용자 웹 화면</td><td>WEB-001 메인</td></tr>
-  <tr><td>POP</td><td>팝업/모달</td><td>POP-001 일정 삭제 확인</td></tr>
-  <tr><td>COM</td><td>공통 컴포넌트</td><td>COM-001 Primary Button</td></tr>
-  <tr><td>API</td><td>서버 API</td><td>API-001 여행정보 저장</td></tr></table>
-</section>
-
-<section id="ia" class="page">
-  <h2>2. IA - 메뉴 구조</h2>
-  <div class="grid3">
-    <div class="box"><h3>Home</h3><p>서비스 소개<br/>여행 시작<br/>인기 여행지</p></div>
-    <div class="box"><h3>여행 정보 입력</h3><p>지역/일정/인원<br/>취향/예산/이동수단<br/>선택 장소</p></div>
-    <div class="box"><h3>일정 결과</h3><p>DAY별 일정<br/>장소 상세<br/>수정/저장/공유</p></div>
+  <div class="section">
+    <div class="section-title">인기 여행지</div>
+    <div class="region-grid" id="region-grid"></div>
   </div>
-  <div class="mono" style="margin-top:18px">플렌K
-├─ WEB-001 메인
-├─ WEB-002 여행 기본정보 입력
-├─ WEB-003 여행 취향정보 입력
-├─ WEB-004 일정 생성
-├─ WEB-005 일정 결과
-│  ├─ WEB-006 장소 상세
-│  └─ WEB-007 일정 수정
-└─ WEB-008 저장한 일정</div>
-</section>
+</div>
 
-<section id="flow" class="page">
-  <h2>3. User Flow / 화면 흐름도</h2>
-  <div class="flow">
-    <div class="node">WEB-001<br/>메인</div><div class="arrow">→</div>
-    <div class="node">WEB-002<br/>기본정보</div><div class="arrow">→</div>
-    <div class="node">WEB-003<br/>취향정보</div><div class="arrow">→</div>
-    <div class="node">WEB-004<br/>일정 생성</div><div class="arrow">→</div>
-    <div class="node">WEB-005<br/>결과</div>
-  </div>
-  <table class="table" style="margin-top:20px"><tr><th>분기</th><th>조건</th><th>처리</th></tr>
-  <tr><td>필수값 누락</td><td>지역/날짜/인원/이동수단 미입력</td><td>해당 입력 영역으로 포커스 이동, 오류 메시지 노출</td></tr>
-  <tr><td>생성 실패</td><td>서버 오류 또는 응답 지연</td><td>POP-002 생성 실패 팝업 노출, 재시도 제공</td></tr>
-  <tr><td>저장</td><td>로그인 사용자</td><td>저장 완료 Toast, WEB-008 목록 반영</td></tr>
-  <tr><td>비로그인 저장</td><td>로그인 필요 정책 적용 시</td><td>로그인 안내 팝업 노출</td></tr></table>
-</section>
-
-<section id="web001" class="page">
-  <h2>WEB-001 메인 화면</h2>
-  <div class="grid2">
-    <div class="wire-wrap">
-      <div class="screen web">
-        <div class="header"><span class="logo">플렌K</span><span>저장한 일정  로그인</span></div>
-        <div class="hero"><h3>한국 여행 일정을<br/>쉽고 빠르게 만들어보세요</h3><p class="small">지역, 일정, 취향을 입력하면 맞춤 여행 코스를 추천합니다.</p><div class="btn">여행 시작하기</div></div>
-        <div class="content"><b>인기 여행지</b><div class="cards" style="margin-top:10px"><div class="card">서울</div><div class="card">부산</div><div class="card">제주</div></div></div>
-        <div class="footer">서비스 소개 · 문의하기 · 이용약관</div>
+<!-- WEB-002 STEP1 -->
+<div id="page-step1" class="page">
+  <div class="step-container">
+    <div class="step-header">
+      <button class="back-btn" onclick="App.go('home')">←</button>
+      <div>
+        <div class="step-title">여행 정보 입력</div>
+        <div class="step-subtitle">기본 정보를 입력해주세요</div>
       </div>
-      <div class="pin" style="left:420px;top:47px">1</div><div class="pin" style="left:465px;top:47px">2</div>
-      <div class="pin" style="left:300px;top:205px">3</div><div class="pin" style="left:120px;top:355px">4</div>
+      <span class="step-badge">1 / 2</span>
     </div>
-    <div class="spec">
-      <h3>컴포넌트/이벤트 명세</h3>
-      <div class="spec-item"><b>① 저장한 일정</b><br/>클릭 시 WEB-008 저장한 일정 화면으로 이동. 비로그인 상태면 로그인 안내 팝업 노출.</div>
-      <div class="spec-item"><b>② 로그인</b><br/>클릭 시 로그인 화면으로 이동. 로그인 후 이전 화면으로 복귀.</div>
-      <div class="spec-item"><b>③ 여행 시작하기</b><br/>클릭 시 WEB-002 여행 기본정보 입력 화면으로 이동. 별도 Validation 없음.</div>
-      <div class="spec-item"><b>④ 인기 여행지 카드</b><br/>클릭 시 선택한 지역 값을 sessionStorage.selectedRegion에 저장 후 WEB-002로 이동. WEB-002의 여행지역 입력값에 자동 세팅.</div>
-      <h3>API</h3><div class="mono">GET /api/regions/popular
-Response: [{regionId, regionName, imageUrl}]</div>
-    </div>
-  </div>
-</section>
+    <div class="progress-bar" style="margin-bottom:32px"><div class="progress-fill" style="width:50%"></div></div>
 
-<section id="web002" class="page">
-  <h2>WEB-002 여행 기본정보 입력</h2>
-  <div class="grid2">
-    <div class="wire-wrap">
-      <div class="screen web">
-        <div class="header"><span>←</span><b>여행 정보 입력</b><span>1/2</span></div>
-        <div class="content">
-          <div class="label">여행 지역</div><div class="field">서울 <span>▼</span></div>
-          <div class="label">여행 기간</div><div class="field">2026.08.01 ~ 2026.08.03 <span>📅</span></div>
-          <div class="label">여행 인원</div><div class="field">성인 2명 <span>＋</span></div>
-          <div class="label">이동 수단</div><div class="cards"><div class="card">대중교통</div><div class="card">자동차</div><div class="card">도보</div></div>
-          <div style="text-align:right"><span class="btn gray">이전</span> <span class="btn">다음</span></div>
-        </div>
+    <div class="form-group">
+      <label class="form-label">여행 지역 <span style="color:var(--error)">*</span></label>
+      <select class="input" id="inp-region">
+        <option value="">지역을 선택해주세요</option>
+        <option value="SEOUL">서울</option>
+        <option value="BUSAN">부산</option>
+        <option value="JEJU">제주</option>
+        <option value="GYEONGJU">경주</option>
+        <option value="GANGWON">강원도</option>
+        <option value="JEONJU">전주</option>
+        <option value="INCHEON">인천</option>
+        <option value="GYEONGGI">경기도</option>
+      </select>
+      <div class="error-msg" id="err-region">여행지역을 선택해주세요.</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">여행 기간 <span style="color:var(--error)">*</span></label>
+      <div style="display:flex;gap:10px;align-items:center">
+        <input type="date" class="input" id="inp-start" style="flex:1">
+        <span style="color:var(--muted);font-weight:600">~</span>
+        <input type="date" class="input" id="inp-end" style="flex:1">
       </div>
-      <div class="pin" style="left:110px;top:115px">1</div><div class="pin" style="left:120px;top:198px">2</div><div class="pin" style="left:115px;top:280px">3</div><div class="pin" style="left:210px;top:378px">4</div><div class="pin" style="left:455px;top:520px">5</div>
+      <div class="error-msg" id="err-dates">여행기간을 선택해주세요.</div>
     </div>
-    <div class="spec">
-      <h3>컴포넌트/이벤트 명세</h3>
-      <div class="spec-item"><b>① 여행 지역 Dropdown</b><br/>필수. 클릭 시 지역 선택 모달 오픈. 인기/전체 지역 검색 가능. 선택값은 trip.regionId에 저장.</div>
-      <div class="spec-item"><b>② 여행 기간 Date Range Picker</b><br/>필수. 시작일/종료일 선택. 종료일이 시작일보다 빠르면 ERR-002 표시. 최대 30일까지 허용.</div>
-      <div class="spec-item"><b>③ 여행 인원 Selector</b><br/>필수. 성인/아동/반려동물 여부 선택. 최소 1명, 최대 20명.</div>
-      <div class="spec-item"><b>④ 이동 수단 Radio Card</b><br/>필수. 대중교통/자동차/도보/택시 중 1개 선택. 결과 화면 동선 계산 기준으로 사용.</div>
-      <div class="spec-item"><b>⑤ 다음 버튼</b><br/>클릭 시 WEB-002 필수값 Validation 실행. 성공 시 입력값 저장 후 WEB-003 이동. 실패 시 첫 번째 오류 영역으로 스크롤.</div>
-    </div>
-  </div>
-</section>
 
-<section id="web003" class="page">
-  <h2>WEB-003 여행 취향정보 입력</h2>
-  <div class="grid2">
-    <div class="wire-wrap">
-      <div class="screen web">
-        <div class="header"><span>←</span><b>여행 취향 선택</b><span>2/2</span></div>
-        <div class="content">
-          <div class="label">연령대</div><div class="field">30대 <span>▼</span></div>
-          <div class="label">여행 스타일</div><div class="cards"><div class="card">맛집</div><div class="card">카페</div><div class="card">힐링</div><div class="card">쇼핑</div><div class="card">자연</div><div class="card">액티비티</div></div>
-          <div class="label" style="margin-top:14px">예산</div><div class="cards"><div class="card">절약</div><div class="card">보통</div><div class="card">여유</div></div>
-          <div class="label" style="margin-top:14px">요청사항</div><div class="field">예: 매운 음식은 피하고 싶어요.</div>
-          <div style="text-align:right"><span class="btn gray">이전</span> <span class="btn">일정 만들기</span></div>
-        </div>
-      </div>
-      <div class="pin" style="left:105px;top:115px">1</div><div class="pin" style="left:110px;top:205px">2</div><div class="pin" style="left:110px;top:355px">3</div><div class="pin" style="left:115px;top:455px">4</div><div class="pin" style="left:455px;top:555px">5</div>
-    </div>
-    <div class="spec">
-      <div class="spec-item"><b>① 연령대 Select</b><br/>선택. 추천 장소의 강도/이동거리/관심사 가중치에 사용. 미선택 시 기본값 ‘무관’.</div>
-      <div class="spec-item"><b>② 여행 스타일 Multi Select</b><br/>최소 1개 이상 선택. 복수 선택 가능. 선택값은 recommendationTags 배열로 전달.</div>
-      <div class="spec-item"><b>③ 예산 Radio</b><br/>필수. 절약/보통/여유 중 1개. 숙소/음식/활동 추천 필터로 사용.</div>
-      <div class="spec-item"><b>④ 요청사항 Textarea</b><br/>선택. 최대 300자. 사용자가 피하고 싶은 음식, 선호 동선, 여행 목적 등을 자유 입력.</div>
-      <div class="spec-item"><b>⑤ 일정 만들기</b><br/>Validation 성공 시 POST /api/trips 호출. 성공 시 tripId를 수신하고 WEB-004로 이동.</div>
-    </div>
-  </div>
-</section>
-
-<section id="web004" class="page">
-  <h2>WEB-004 일정 생성 화면</h2>
-  <div class="grid2">
-    <div class="wire-wrap">
-      <div class="screen web">
-        <div class="content" style="text-align:center;padding:90px 20px">
-          <div style="font-size:56px">🧭</div>
-          <h3>여행 일정을 만들고 있어요</h3>
-          <p class="small">입력한 조건을 기준으로 관광지, 맛집, 숙소, 이동 동선을 구성합니다.</p>
-          <div class="field" style="max-width:360px;margin:30px auto">추천 장소 수집 중...</div>
-          <span class="btn gray">취소</span>
-        </div>
-      </div>
-      <div class="pin" style="left:320px;top:205px">1</div><div class="pin" style="left:315px;top:365px">2</div><div class="pin" style="left:315px;top:470px">3</div>
-    </div>
-    <div class="spec">
-      <div class="spec-item"><b>① 생성 안내 문구</b><br/>WEB-003에서 전달받은 tripId 기준으로 생성 상태 조회. 화면 이탈 방지 안내 노출.</div>
-      <div class="spec-item"><b>② 진행 상태</b><br/>3초마다 GET /api/trips/{tripId}/status 폴링. 상태값: CREATED, COLLECTING, ROUTING, COMPLETED, FAILED.</div>
-      <div class="spec-item"><b>③ 취소 버튼</b><br/>클릭 시 POP-003 생성 취소 확인. 확인 시 WEB-003으로 이동하고 생성 요청 취소 API 호출.</div>
-      <h3>완료 처리</h3><div class="mono">status == COMPLETED → WEB-005 이동
-status == FAILED → POP-002 생성 실패 팝업</div>
-    </div>
-  </div>
-</section>
-
-<section id="web005" class="page">
-  <h2>WEB-005 여행 일정 결과</h2>
-  <div class="grid2">
-    <div class="wire-wrap">
-      <div class="screen web">
-        <div class="header"><b>서울 2박 3일</b><span>공유 저장</span></div>
-        <div class="content">
-          <div class="day"><b>DAY 1</b>
-            <div class="place"><div class="thumb"></div><div><b>경복궁</b><br/><span class="small">10:00 · 90분 · 도보 12분</span></div><span>변경</span></div>
-            <div class="place"><div class="thumb"></div><div><b>한식 맛집</b><br/><span class="small">12:00 · 점심 · 대중교통 8분</span></div><span>상세</span></div>
+    <div class="form-group">
+      <label class="form-label">여행 인원 <span style="color:var(--error)">*</span></label>
+      <div class="people-box">
+        <div class="people-row">
+          <div><div class="people-label">성인</div><div class="people-sub">만 13세 이상</div></div>
+          <div class="counter">
+            <button class="counter-btn" onclick="App.changeCount('adult',-1)">−</button>
+            <span class="counter-value" id="cnt-adult">2</span>
+            <button class="counter-btn" onclick="App.changeCount('adult',1)">+</button>
           </div>
-          <div class="day"><b>DAY 2</b><div class="place"><div class="thumb"></div><div><b>북촌 한옥마을</b><br/><span class="small">11:00 · 사진명소</span></div><span>상세</span></div></div>
-          <div style="text-align:center"><span class="btn out">다시 만들기</span> <span class="btn">저장하기</span></div>
         </div>
-      </div>
-      <div class="pin" style="left:475px;top:48px">1</div><div class="pin" style="left:515px;top:48px">2</div><div class="pin" style="left:120px;top:225px">3</div><div class="pin" style="left:520px;top:245px">4</div><div class="pin" style="left:400px;top:555px">5</div>
-    </div>
-    <div class="spec">
-      <div class="spec-item"><b>① 공유</b><br/>클릭 시 공유 URL 생성 API 호출. 성공 시 클립보드 복사 및 Toast 노출.</div>
-      <div class="spec-item"><b>② 저장</b><br/>클릭 시 POST /api/trips/{tripId}/save 호출. 성공 시 ‘저장되었습니다’ Toast. 이미 저장된 경우 버튼명 ‘저장됨’으로 변경.</div>
-      <div class="spec-item"><b>③ 장소 카드</b><br/>클릭 시 WEB-006 장소 상세로 이동. placeId, tripId, dayNo 전달.</div>
-      <div class="spec-item"><b>④ 변경</b><br/>클릭 시 대체 장소 추천 모달 오픈. 같은 카테고리/동선 30분 이내 장소 우선 노출.</div>
-      <div class="spec-item"><b>⑤ 다시 만들기/저장하기</b><br/>다시 만들기: 조건 유지 후 일정 재생성. 저장하기: 현재 일정 저장.</div>
-    </div>
-  </div>
-</section>
-
-<section id="web006" class="page">
-  <h2>WEB-006 장소 상세</h2>
-  <div class="grid2">
-    <div class="wire-wrap">
-      <div class="screen web">
-        <div class="header"><span>←</span><b>장소 상세</b><span>지도</span></div>
-        <div style="height:180px;background:#dbeafe;display:flex;align-items:center;justify-content:center">대표 이미지</div>
-        <div class="content">
-          <h3>경복궁</h3><p class="small">서울 종로구 사직로 161</p>
-          <div class="field">운영시간 09:00~18:00</div>
-          <div class="field">예상 체류시간 90분</div>
-          <p>서울의 대표 궁궐 관광지로 역사와 전통문화를 경험할 수 있는 장소입니다.</p>
-          <span class="btn out">일정에서 제외</span> <span class="btn">이 장소로 변경</span>
-        </div>
-      </div>
-      <div class="pin" style="left:520px;top:48px">1</div><div class="pin" style="left:315px;top:155px">2</div><div class="pin" style="left:108px;top:285px">3</div><div class="pin" style="left:390px;top:555px">4</div>
-    </div>
-    <div class="spec">
-      <div class="spec-item"><b>① 지도</b><br/>클릭 시 지도 영역 또는 외부 지도 새 탭 오픈. 좌표값(lat,lng)이 없으면 버튼 비활성화.</div>
-      <div class="spec-item"><b>② 대표 이미지</b><br/>place.imageUrl 표시. 이미지 없을 경우 기본 이미지 노출.</div>
-      <div class="spec-item"><b>③ 장소 정보</b><br/>주소/영업시간/예상비용/체류시간/설명 표시. API 응답값 없으면 ‘정보 없음’ 처리.</div>
-      <div class="spec-item"><b>④ 일정에서 제외/변경</b><br/>제외: 현재 일정에서 제거 후 WEB-007 수정 화면으로 이동. 변경: 이전 화면의 선택 슬롯에 해당 장소 적용.</div>
-    </div>
-  </div>
-</section>
-
-<section id="web007" class="page">
-  <h2>WEB-007 일정 수정</h2>
-  <div class="grid2">
-    <div class="wire-wrap">
-      <div class="screen web">
-        <div class="header"><span>←</span><b>일정 수정</b><span>저장</span></div>
-        <div class="content">
-          <div class="day"><b>DAY 1</b>
-            <div class="field">☰ 10:00 경복궁 <span>삭제</span></div>
-            <div class="field">☰ 12:00 한식 맛집 <span>변경</span></div>
-            <div class="btn out">+ 장소 추가</div>
+        <div class="people-row">
+          <div><div class="people-label">아동</div><div class="people-sub">만 12세 이하</div></div>
+          <div class="counter">
+            <button class="counter-btn" onclick="App.changeCount('child',-1)">−</button>
+            <span class="counter-value" id="cnt-child">0</span>
+            <button class="counter-btn" onclick="App.changeCount('child',1)">+</button>
           </div>
-          <div class="field">이동 동선 다시 계산</div>
-          <div style="text-align:center"><span class="btn">수정 완료</span></div>
         </div>
       </div>
-      <div class="pin" style="left:520px;top:48px">1</div><div class="pin" style="left:120px;top:155px">2</div><div class="pin" style="left:520px;top:230px">3</div><div class="pin" style="left:180px;top:320px">4</div><div class="pin" style="left:315px;top:470px">5</div>
+      <div class="error-msg" id="err-people">여행 인원은 1명 이상이어야 합니다.</div>
     </div>
-    <div class="spec">
-      <div class="spec-item"><b>① 저장</b><br/>현재 수정 상태를 서버에 저장. 성공 시 WEB-005 결과 화면으로 이동.</div>
-      <div class="spec-item"><b>② 드래그 핸들</b><br/>장소 순서 변경. 변경 즉시 프론트 상태만 변경, 저장 버튼 클릭 전까지 서버 반영 안 함.</div>
-      <div class="spec-item"><b>③ 삭제/변경</b><br/>삭제: POP-001 확인 후 제거. 변경: 대체 장소 모달 오픈.</div>
-      <div class="spec-item"><b>④ 장소 추가</b><br/>장소 검색 모달 오픈. 선택 시 해당 DAY 마지막 순서에 추가.</div>
-      <div class="spec-item"><b>⑤ 수정 완료</b><br/>PUT /api/trips/{tripId}/itinerary 호출. 성공 시 결과 화면 갱신.</div>
+
+    <div class="form-group">
+      <label class="form-label">이동 수단 <span style="color:var(--error)">*</span></label>
+      <div class="transport-grid">
+        <div class="transport-card" data-t="PUBLIC" onclick="App.pickTransport('PUBLIC',this)"><span class="transport-icon">🚌</span><span class="transport-label">대중교통</span></div>
+        <div class="transport-card" data-t="CAR"    onclick="App.pickTransport('CAR',this)">   <span class="transport-icon">🚗</span><span class="transport-label">자동차</span></div>
+        <div class="transport-card" data-t="WALK"   onclick="App.pickTransport('WALK',this)">  <span class="transport-icon">🚶</span><span class="transport-label">도보</span></div>
+        <div class="transport-card" data-t="TAXI"   onclick="App.pickTransport('TAXI',this)">  <span class="transport-icon">🚕</span><span class="transport-label">택시</span></div>
+      </div>
+      <div class="error-msg" id="err-transport">이동 수단을 선택해주세요.</div>
+    </div>
+
+    <div class="step-actions">
+      <button class="btn btn-ghost" onclick="App.go('home')">이전</button>
+      <button class="btn btn-primary" onclick="App.nextStep2()">다음</button>
     </div>
   </div>
-</section>
+</div>
 
-<section id="web008" class="page">
-  <h2>WEB-008 저장한 일정</h2>
-  <div class="grid2">
-    <div class="wire-wrap">
-      <div class="screen web">
-        <div class="header"><span>←</span><b>저장한 일정</b><span></span></div>
-        <div class="content">
-          <div class="card big"><b>서울 2박 3일</b><br/><span class="small">2026.08.01 ~ 2026.08.03 · 저장일 2026.07.07</span><br/><br/><span class="btn out">보기</span> <span class="btn gray">삭제</span></div>
-          <div class="card big"><b>부산 1박 2일</b><br/><span class="small">2026.09.10 ~ 2026.09.11</span><br/><br/><span class="btn out">보기</span> <span class="btn gray">삭제</span></div>
+<!-- WEB-003 STEP2 -->
+<div id="page-step2" class="page">
+  <div class="step-container">
+    <div class="step-header">
+      <button class="back-btn" onclick="App.go('step1')">←</button>
+      <div>
+        <div class="step-title">여행 취향 선택</div>
+        <div class="step-subtitle">취향에 맞는 일정을 만들어드려요</div>
+      </div>
+      <span class="step-badge">2 / 2</span>
+    </div>
+    <div class="progress-bar" style="margin-bottom:32px"><div class="progress-fill" style="width:100%"></div></div>
+
+    <div class="form-group">
+      <label class="form-label">연령대</label>
+      <select class="input" id="inp-age">
+        <option value="">무관</option>
+        <option value="20">20대</option>
+        <option value="30">30대</option>
+        <option value="40">40대</option>
+        <option value="50">50대 이상</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">여행 스타일 <span style="color:var(--error)">*</span> <span style="color:var(--muted);text-transform:none;font-weight:400;letter-spacing:0">(복수 선택 가능)</span></label>
+      <div class="chip-group" id="style-chips">
+        <div class="chip" onclick="App.toggleStyle('FOOD',this)">🍜 맛집</div>
+        <div class="chip" onclick="App.toggleStyle('CAFE',this)">☕ 카페</div>
+        <div class="chip" onclick="App.toggleStyle('HEALING',this)">🧘 힐링</div>
+        <div class="chip" onclick="App.toggleStyle('SHOPPING',this)">🛍️ 쇼핑</div>
+        <div class="chip" onclick="App.toggleStyle('NATURE',this)">🌿 자연</div>
+        <div class="chip" onclick="App.toggleStyle('ACTIVITY',this)">🏄 액티비티</div>
+        <div class="chip" onclick="App.toggleStyle('CULTURE',this)">🏛️ 문화/역사</div>
+        <div class="chip" onclick="App.toggleStyle('NIGHT',this)">🌃 야경</div>
+      </div>
+      <div class="error-msg" id="err-style">여행 스타일을 1개 이상 선택해주세요.</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">예산 수준 <span style="color:var(--error)">*</span></label>
+      <div class="budget-grid">
+        <div class="budget-card" onclick="App.pickBudget('ECONOMY',this)">
+          <div style="font-size:26px;margin-bottom:8px">💰</div>
+          <div style="font-weight:700;margin-bottom:2px">절약</div>
+          <div style="font-size:11px;color:var(--muted)">5만원 이하/일</div>
+        </div>
+        <div class="budget-card" onclick="App.pickBudget('NORMAL',this)">
+          <div style="font-size:26px;margin-bottom:8px">💳</div>
+          <div style="font-weight:700;margin-bottom:2px">보통</div>
+          <div style="font-size:11px;color:var(--muted)">5~15만원/일</div>
+        </div>
+        <div class="budget-card" onclick="App.pickBudget('LUXURY',this)">
+          <div style="font-size:26px;margin-bottom:8px">💎</div>
+          <div style="font-weight:700;margin-bottom:2px">여유</div>
+          <div style="font-size:11px;color:var(--muted)">15만원 이상/일</div>
         </div>
       </div>
-      <div class="pin" style="left:120px;top:145px">1</div><div class="pin" style="left:160px;top:250px">2</div><div class="pin" style="left:260px;top:250px">3</div>
+      <div class="error-msg" id="err-budget">예산을 선택해주세요.</div>
     </div>
-    <div class="spec">
-      <div class="spec-item"><b>① 저장 일정 카드</b><br/>저장된 여행 일정 단위로 카드 노출. 지역, 기간, 저장일, 대표 이미지 표시.</div>
-      <div class="spec-item"><b>② 보기</b><br/>클릭 시 해당 tripId 기준 WEB-005 결과 화면으로 이동.</div>
-      <div class="spec-item"><b>③ 삭제</b><br/>POP-001 삭제 확인 팝업 노출. 확인 시 DELETE /api/trips/{tripId} 호출 후 목록 갱신.</div>
-      <h3>Empty</h3><div class="mono">저장한 일정이 없습니다.
-[여행 일정 만들기] 버튼 노출 → WEB-002 이동</div>
+
+    <div class="form-group">
+      <label class="form-label">요청사항 <span style="color:var(--muted);text-transform:none;font-weight:400;letter-spacing:0">(선택 · 최대 300자)</span></label>
+      <textarea class="textarea" id="inp-notes" placeholder="예: 매운 음식은 피하고 싶어요. 아이와 함께해서 안전한 장소를 원해요." maxlength="300"></textarea>
+      <div style="text-align:right;font-size:12px;color:var(--muted);margin-top:4px"><span id="notes-count">0</span>/300</div>
+    </div>
+
+    <div class="step-actions">
+      <button class="btn btn-ghost" onclick="App.go('step1')">이전</button>
+      <button class="btn btn-primary" onclick="App.createTrip()">일정 만들기</button>
     </div>
   </div>
-</section>
+</div>
 
-<section id="api" class="page">
-  <h2>API 명세 초안</h2>
-  <table class="table"><tr><th>ID</th><th>Method</th><th>URL</th><th>설명</th></tr>
-  <tr><td>API-001</td><td>GET</td><td>/api/regions</td><td>전체 여행지역 조회</td></tr>
-  <tr><td>API-002</td><td>GET</td><td>/api/regions/popular</td><td>인기 여행지역 조회</td></tr>
-  <tr><td>API-003</td><td>POST</td><td>/api/trips</td><td>여행 조건 저장 및 일정 생성 요청</td></tr>
-  <tr><td>API-004</td><td>GET</td><td>/api/trips/{tripId}/status</td><td>일정 생성 상태 조회</td></tr>
-  <tr><td>API-005</td><td>GET</td><td>/api/trips/{tripId}</td><td>일정 결과 조회</td></tr>
-  <tr><td>API-006</td><td>PUT</td><td>/api/trips/{tripId}/itinerary</td><td>수정된 일정 저장</td></tr>
-  <tr><td>API-007</td><td>POST</td><td>/api/trips/{tripId}/save</td><td>일정 저장</td></tr>
-  <tr><td>API-008</td><td>DELETE</td><td>/api/trips/{tripId}</td><td>저장 일정 삭제</td></tr></table>
-  <h3 style="margin-top:18px">POST /api/trips Request 예시</h3>
-  <div class="mono">{
-  "regionId": "SEOUL",
-  "startDate": "2026-08-01",
-  "endDate": "2026-08-03",
-  "people": { "adult": 2, "child": 0 },
-  "transportType": "PUBLIC",
-  "ageGroup": "30",
-  "styles": ["FOOD", "CAFE", "HEALING"],
-  "budgetType": "NORMAL",
-  "requestText": "매운 음식은 피하고 싶어요."
-}</div>
-</section>
-
-<section id="validation" class="page">
-  <h2>Validation 명세</h2>
-  <table class="table"><tr><th>ID</th><th>항목</th><th>조건</th><th>메시지</th></tr>
-  <tr><td>VAL-001</td><td>여행지역</td><td>미선택</td><td>여행지역을 선택해주세요.</td></tr>
-  <tr><td>VAL-002</td><td>여행기간</td><td>시작일 또는 종료일 미선택</td><td>여행기간을 선택해주세요.</td></tr>
-  <tr><td>VAL-003</td><td>여행기간</td><td>종료일 &lt; 시작일</td><td>종료일은 시작일보다 빠를 수 없습니다.</td></tr>
-  <tr><td>VAL-004</td><td>여행인원</td><td>0명</td><td>여행 인원은 1명 이상이어야 합니다.</td></tr>
-  <tr><td>VAL-005</td><td>여행스타일</td><td>미선택</td><td>여행 스타일을 1개 이상 선택해주세요.</td></tr>
-  <tr><td>VAL-006</td><td>요청사항</td><td>300자 초과</td><td>요청사항은 300자 이하로 입력해주세요.</td></tr></table>
-</section>
-
-<section id="popup" class="page">
-  <h2>Popup / Toast / Error 명세</h2>
-  <div class="grid3">
-    <div class="box"><h3>POP-001 삭제 확인</h3><p>일정을 삭제하시겠습니까?<br/>[취소] [삭제]</p><p class="small">삭제 클릭 시 DELETE API 호출</p></div>
-    <div class="box"><h3>POP-002 생성 실패</h3><p>일정 생성에 실패했습니다.<br/>다시 시도해주세요.</p><p class="small">[재시도] 클릭 시 WEB-004 재진입</p></div>
-    <div class="box"><h3>POP-003 생성 취소</h3><p>일정 생성을 취소하시겠습니까?</p><p class="small">확인 시 WEB-003 이동</p></div>
+<!-- WEB-004 GENERATING -->
+<div id="page-generating" class="page">
+  <div class="gen-container">
+    <span class="gen-icon">🧭</span>
+    <div class="gen-title">여행 일정을 만들고 있어요</div>
+    <div class="gen-desc">입력한 조건을 기준으로 관광지, 맛집, 숙소,<br>이동 동선을 구성합니다.</div>
+    <div class="gen-status"><div class="spinner"></div><span id="gen-status-text">추천 장소 수집 중...</span></div>
+    <div class="progress-bar" style="margin-bottom:28px"><div class="progress-fill" id="gen-progress" style="width:0%"></div></div>
+    <button class="btn btn-ghost" onclick="App.cancelGen()">취소</button>
   </div>
-  <h3 style="margin-top:20px">Toast</h3>
-  <table class="table"><tr><th>ID</th><th>상황</th><th>문구</th></tr>
-  <tr><td>TOAST-001</td><td>저장 성공</td><td>일정이 저장되었습니다.</td></tr>
-  <tr><td>TOAST-002</td><td>공유 링크 복사</td><td>공유 링크가 복사되었습니다.</td></tr>
-  <tr><td>TOAST-003</td><td>네트워크 오류</td><td>네트워크 상태를 확인해주세요.</td></tr></table>
-</section>
+</div>
 
-<section id="component" class="page">
-  <h2>공통 컴포넌트 명세</h2>
-  <table class="table"><tr><th>ID</th><th>컴포넌트</th><th>상태</th><th>설명</th></tr>
-  <tr><td>COM-001</td><td>Primary Button</td><td>Default/Hover/Disabled/Loading</td><td>주요 액션 버튼. 높이 48px, radius 12px.</td></tr>
-  <tr><td>COM-002</td><td>Secondary Button</td><td>Default/Hover/Disabled</td><td>보조 액션. 흰 배경 + 파란 테두리.</td></tr>
-  <tr><td>COM-003</td><td>Input Field</td><td>Default/Focus/Error/Disabled</td><td>라벨, Placeholder, 오류문구 포함.</td></tr>
-  <tr><td>COM-004</td><td>Card</td><td>Default/Selected</td><td>지역/스타일/일정 카드 공통.</td></tr>
-  <tr><td>COM-005</td><td>Modal</td><td>Open/Close</td><td>선택, 확인, 오류 팝업에 사용.</td></tr></table>
-</section>
+<!-- WEB-005 RESULT -->
+<div id="page-result" class="page">
+  <div class="result-container">
+    <div class="result-header">
+      <div>
+        <div class="result-title" id="result-title"></div>
+        <div class="result-meta" id="result-meta"></div>
+      </div>
+      <div class="result-actions">
+        <button class="btn btn-ghost btn-sm" onclick="App.shareTrip()">🔗 공유</button>
+        <button class="btn btn-primary btn-sm" id="save-btn" onclick="App.saveTrip()">저장하기</button>
+      </div>
+    </div>
+    <div id="result-content"></div>
+    <div style="display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap">
+      <button class="btn btn-secondary" onclick="App.regenTrip()">다시 만들기</button>
+      <button class="btn btn-primary" onclick="App.go('edit')">일정 수정</button>
+    </div>
+  </div>
+</div>
 
-</main></div></body></html>
+<!-- WEB-006 PLACE DETAIL -->
+<div id="page-place" class="page">
+  <div class="detail-container">
+    <div class="page-top">
+      <button class="back-btn" onclick="App.go('result')">←</button>
+      <span class="page-top-title">장소 상세</span>
+      <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="App.openMap()">🗺️ 지도 보기</button>
+    </div>
+    <div class="place-image" id="place-image"></div>
+    <div id="place-detail"></div>
+  </div>
+</div>
+
+<!-- WEB-007 EDIT -->
+<div id="page-edit" class="page">
+  <div class="edit-container">
+    <div class="page-top">
+      <button class="back-btn" onclick="App.go('result')">←</button>
+      <span class="page-top-title">일정 수정</span>
+      <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="App.finishEdit()">수정 완료</button>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px">장소를 드래그하여 순서를 바꿀 수 있어요.</p>
+    <div id="edit-content"></div>
+  </div>
+</div>
+
+<!-- WEB-008 SAVED -->
+<div id="page-saved" class="page">
+  <div class="saved-container">
+    <div class="page-top">
+      <button class="back-btn" onclick="App.go('home')">←</button>
+      <span class="page-top-title">저장한 일정</span>
+    </div>
+    <div id="saved-content"></div>
+  </div>
+</div>
+
+</main>
+
+<div id="toast"></div>
+<div id="modal-overlay">
+  <div id="modal-box">
+    <h3 id="modal-title"></h3>
+    <p id="modal-desc"></p>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<script>
+const REGIONS=[
+  {id:'SEOUL',name:'서울',desc:'한국의 수도',emoji:'🏙️',color:'linear-gradient(135deg,#1e3a8a,#3b82f6)'},
+  {id:'BUSAN',name:'부산',desc:'바다와 문화의 도시',emoji:'🌊',color:'linear-gradient(135deg,#0f766e,#14b8a6)'},
+  {id:'JEJU',name:'제주',desc:'자연의 섬',emoji:'🏔️',color:'linear-gradient(135deg,#15803d,#22c55e)'},
+  {id:'GYEONGJU',name:'경주',desc:'천년 고도',emoji:'🏛️',color:'linear-gradient(135deg,#92400e,#f59e0b)'},
+  {id:'GANGWON',name:'강원도',desc:'산과 바다의 보고',emoji:'🌲',color:'linear-gradient(135deg,#374151,#6b7280)'},
+  {id:'JEONJU',name:'전주',desc:'한옥마을과 한식',emoji:'🍱',color:'linear-gradient(135deg,#7c2d12,#ea580c)'},
+];
+
+const PLACES={
+  SEOUL:[
+    {id:'s1',name:'경복궁',cat:'관광지',emoji:'🏯',dur:90,addr:'서울 종로구 사직로 161',hours:'09:00~18:00',cost:'3,000원',desc:'조선왕조의 법궁. 아름다운 궁궐 건축과 역사·문화를 경험할 수 있습니다.',bg:'#dbeafe'},
+    {id:'s2',name:'광장시장',cat:'맛집',emoji:'🥘',dur:60,addr:'서울 종로구 창경궁로 88',hours:'09:00~23:00',cost:'1만원~',desc:'빈대떡·마약김밥·육회 등 서울의 대표 전통 시장으로 먹거리가 가득합니다.',bg:'#fef3c7'},
+    {id:'s3',name:'북촌 한옥마을',cat:'관광지',emoji:'🏘️',dur:90,addr:'서울 종로구 북촌로5나길',hours:'상시',cost:'무료',desc:'600여 년의 역사를 간직한 한옥이 밀집된 아름다운 골목마을입니다.',bg:'#dcfce7'},
+    {id:'s4',name:'인사동 카페거리',cat:'카페',emoji:'☕',dur:60,addr:'서울 종로구 인사동길',hours:'10:00~22:00',cost:'6,000원~',desc:'전통 찻집부터 트렌디한 카페까지 다양한 카페가 모여 있는 거리입니다.',bg:'#ede9fe'},
+    {id:'s5',name:'남산서울타워',cat:'관광지',emoji:'🗼',dur:120,addr:'서울 용산구 남산공원길 105',hours:'10:00~23:00',cost:'21,000원',desc:'서울 전경을 360도로 즐길 수 있는 대표 랜드마크입니다.',bg:'#fee2e2'},
+    {id:'s6',name:'홍대 걷고싶은거리',cat:'쇼핑',emoji:'🛍️',dur:120,addr:'서울 마포구 와우산로',hours:'상시',cost:'자유',desc:'젊음과 창작의 거리. 독립 서점, 빈티지숍, 스트리트 공연이 가득합니다.',bg:'#fce7f3'},
+    {id:'s7',name:'한강 여의도공원',cat:'힐링',emoji:'🌸',dur:90,addr:'서울 영등포구 여의공원로',hours:'상시',cost:'무료',desc:'봄 벚꽃과 여름 잔디. 자전거와 피크닉을 즐기기에 최적입니다.',bg:'#d1fae5'},
+    {id:'s8',name:'이태원 경리단길',cat:'맛집',emoji:'🌮',dur:90,addr:'서울 용산구 녹사평대로',hours:'11:00~24:00',cost:'2만원~',desc:'세계 각국의 음식과 감각적인 카페가 모여 있는 이색적인 거리입니다.',bg:'#fef3c7'},
+  ],
+  BUSAN:[
+    {id:'b1',name:'해운대 해수욕장',cat:'관광지',emoji:'🏖️',dur:120,addr:'부산 해운대구 해운대해변로 264',hours:'상시',cost:'무료',desc:'한국 최고의 해수욕장. 넓은 백사장과 파란 바다가 일품입니다.',bg:'#dbeafe'},
+    {id:'b2',name:'자갈치시장',cat:'맛집',emoji:'🐟',dur:90,addr:'부산 중구 자갈치해안로 52',hours:'08:00~22:00',cost:'2만원~',desc:'신선한 회와 해산물을 합리적인 가격에 즐길 수 있는 부산의 대표 시장입니다.',bg:'#fef3c7'},
+    {id:'b3',name:'감천문화마을',cat:'관광지',emoji:'🎨',dur:90,addr:'부산 사하구 감내2로 203',hours:'09:00~18:00',cost:'2,000원',desc:'알록달록한 벽화와 미로 같은 골목. "부산의 마추픽추"라고 불립니다.',bg:'#fee2e2'},
+    {id:'b4',name:'광안리 해수욕장',cat:'관광지',emoji:'🌉',dur:120,addr:'부산 수영구 광안해변로 219',hours:'상시',cost:'무료',desc:'광안대교의 야경이 펼쳐지는 낭만적인 해수욕장입니다.',bg:'#ede9fe'},
+    {id:'b5',name:'BIFF 광장',cat:'문화',emoji:'🎬',dur:60,addr:'부산 중구 남포동 BIFF광장로',hours:'상시',cost:'무료',desc:'국제영화제의 도시 부산의 명소. 씨앗호떡과 핫도그가 유명합니다.',bg:'#dcfce7'},
+    {id:'b6',name:'해동용궁사',cat:'관광지',emoji:'⛩️',dur:90,addr:'부산 기장군 기장읍 용궁길 86',hours:'04:30~21:00',cost:'무료',desc:'바다 절벽 위에 세워진 아름다운 해안 사찰. 소원 성취의 명소입니다.',bg:'#dbeafe'},
+  ],
+  JEJU:[
+    {id:'j1',name:'성산일출봉',cat:'관광지',emoji:'🌋',dur:120,addr:'제주 서귀포시 성산읍 일출로 284-12',hours:'07:00~20:00',cost:'5,000원',desc:'UNESCO 세계자연유산. 분화구 정상에서 바라보는 일출이 장관입니다.',bg:'#dbeafe'},
+    {id:'j2',name:'협재해수욕장',cat:'관광지',emoji:'🏝️',dur:120,addr:'제주 제주시 한림읍 협재리',hours:'상시',cost:'무료',desc:'에메랄드빛 바다와 새하얀 모래사장이 펼쳐지는 제주 최고의 해변입니다.',bg:'#d1fae5'},
+    {id:'j3',name:'우도',cat:'관광지',emoji:'🐄',dur:240,addr:'제주 제주시 우도면',hours:'상시',cost:'페리 5,500원~',desc:'소를 닮은 작은 섬. 우도 땅콩 아이스크림과 아름다운 해안이 유명합니다.',bg:'#fef3c7'},
+    {id:'j4',name:'천지연폭포',cat:'관광지',emoji:'💧',dur:60,addr:'제주 서귀포시 천지동 667-7',hours:'08:00~22:00',cost:'2,000원',desc:'제주 서귀포의 아름다운 폭포. 야간에도 개방되어 분위기가 색다릅니다.',bg:'#dbeafe'},
+    {id:'j5',name:'흑돼지 거리',cat:'맛집',emoji:'🥩',dur:90,addr:'제주 제주시 연동',hours:'12:00~22:00',cost:'3만원~',desc:'제주 특산 흑돼지를 구워 먹는 제주 여행 필수 코스입니다.',bg:'#fee2e2'},
+    {id:'j6',name:'한라산 탐방',cat:'액티비티',emoji:'⛰️',dur:360,addr:'제주 제주시 아라동',hours:'05:00~',cost:'무료',desc:'한국 최고봉 한라산. 성판악~백록담 코스가 인기입니다.',bg:'#dcfce7'},
+  ],
+  GYEONGJU:[
+    {id:'g1',name:'불국사',cat:'관광지',emoji:'⛩️',dur:120,addr:'경북 경주시 불국로 385',hours:'08:00~18:00',cost:'6,000원',desc:'UNESCO 세계유산으로 신라 불교 문화와 건축의 정수를 보여줍니다.',bg:'#dbeafe'},
+    {id:'g2',name:'석굴암',cat:'관광지',emoji:'🗿',dur:90,addr:'경북 경주시 불국로 873-243',hours:'08:00~18:00',cost:'6,000원',desc:'신라 석조 예술의 걸작인 세계유산. 본존불의 미소가 인상적입니다.',bg:'#dcfce7'},
+    {id:'g3',name:'황리단길',cat:'카페',emoji:'☕',dur:120,addr:'경북 경주시 황남동',hours:'10:00~22:00',cost:'자유',desc:'경주의 핫한 골목길. 한옥 카페와 디저트 가게가 즐비합니다.',bg:'#fef3c7'},
+    {id:'g4',name:'첨성대',cat:'관광지',emoji:'🔭',dur:60,addr:'경북 경주시 첨성로 169-5',hours:'상시',cost:'무료',desc:'동양 최고(最古)의 천문대로 신라 시대의 과학 수준을 보여주는 유적입니다.',bg:'#fee2e2'},
+    {id:'g5',name:'경주 교리김밥',cat:'맛집',emoji:'🍱',dur:60,addr:'경북 경주시 교동',hours:'08:00~20:00',cost:'5,000원~',desc:'경주 여행에서 꼭 먹어야 할 전통 김밥집입니다.',bg:'#fef3c7'},
+  ],
+  GANGWON:[
+    {id:'gw1',name:'설악산 국립공원',cat:'자연',emoji:'⛰️',dur:360,addr:'강원 속초시 설악산로 833',hours:'05:00~',cost:'4,500원',desc:'한국의 대표 명산. 케이블카와 다양한 등산로로 사계절 인기입니다.',bg:'#dcfce7'},
+    {id:'gw2',name:'속초 중앙시장',cat:'맛집',emoji:'🍢',dur:90,addr:'강원 속초시 중앙로147번길 12',hours:'09:00~22:00',cost:'1만원~',desc:'오징어순대·닭강정 등 속초의 먹거리가 가득한 전통 시장입니다.',bg:'#fef3c7'},
+    {id:'gw3',name:'경포해변',cat:'관광지',emoji:'🌊',dur:90,addr:'강원 강릉시 경포로 365',hours:'상시',cost:'무료',desc:'강릉을 대표하는 넓은 해변. 서퍼들에게도 인기 있는 명소입니다.',bg:'#dbeafe'},
+    {id:'gw4',name:'안목해변 카페거리',cat:'카페',emoji:'☕',dur:60,addr:'강원 강릉시 창해로14번길',hours:'상시',cost:'자유',desc:'바다 바로 앞에서 즐기는 커피. 한국 최고의 카페거리 중 하나입니다.',bg:'#ede9fe'},
+  ],
+  JEONJU:[
+    {id:'jj1',name:'전주 한옥마을',cat:'관광지',emoji:'🏘️',dur:120,addr:'전북 전주시 완산구 기린대로 99',hours:'상시',cost:'무료',desc:'700여 채의 한옥이 밀집된 전통 문화 체험 공간입니다.',bg:'#dbeafe'},
+    {id:'jj2',name:'전주 비빔밥',cat:'맛집',emoji:'🍚',dur:90,addr:'전북 전주시 완산구 전주천동로',hours:'11:00~21:00',cost:'12,000원~',desc:'전주 비빔밥의 본고장에서 정통 비빔밥을 맛보세요.',bg:'#fef3c7'},
+    {id:'jj3',name:'경기전',cat:'관광지',emoji:'🏛️',dur:60,addr:'전북 전주시 완산구 태조로 44',hours:'09:00~19:00',cost:'3,000원',desc:'조선 태조 이성계의 어진을 모신 사당으로 역사적 가치가 높습니다.',bg:'#dcfce7'},
+  ],
+  INCHEON:[
+    {id:'ic1',name:'송도 센트럴파크',cat:'힐링',emoji:'🌳',dur:90,addr:'인천 연수구 컨벤시아대로 160',hours:'상시',cost:'무료',desc:'해수를 이용한 공원으로 카약과 산책로가 갖춰진 인천의 명소입니다.',bg:'#dcfce7'},
+    {id:'ic2',name:'인천 차이나타운',cat:'관광지',emoji:'🏮',dur:90,addr:'인천 중구 차이나타운로 59번길',hours:'상시',cost:'자유',desc:'짜장면 발상지이자 화교 문화를 체험할 수 있는 독특한 거리입니다.',bg:'#fee2e2'},
+  ],
+  GYEONGGI:[
+    {id:'gg1',name:'수원 화성',cat:'관광지',emoji:'🏰',dur:120,addr:'경기 수원시 장안구 영화동',hours:'09:00~18:00',cost:'1,500원',desc:'UNESCO 세계유산으로 등재된 조선 시대의 계획도시 성곽입니다.',bg:'#dbeafe'},
+    {id:'gg2',name:'에버랜드',cat:'액티비티',emoji:'🎢',dur:480,addr:'경기 용인시 처인구 포곡읍 에버랜드로 199',hours:'10:00~22:00',cost:'62,000원~',desc:'한국 최대의 테마파크. 롤러코스터와 사파리가 인기입니다.',bg:'#fce7f3'},
+  ],
+};
+
+const ALL_PLACES=Object.values(PLACES).flat();
+const TL={PUBLIC:'대중교통',CAR:'자동차',WALK:'도보',TAXI:'택시'};
+const TIMES=['09:00','11:00','13:30','15:30','18:00'];
+
+function daysBetween(s,e){return Math.round((new Date(e)-new Date(s))/864e5)+1}
+function fmt(d){if(!d)return '';const t=new Date(d);return `${t.getFullYear()}.${String(t.getMonth()+1).padStart(2,'0')}.${String(t.getDate()).padStart(2,'0')}`}
+
+const App={
+  s:{
+    region:'',start:'',end:'',people:{adult:2,child:0},
+    transport:'',ageGroup:'',styles:[],budget:'',notes:'',
+    trip:null,place:null,
+    saved:JSON.parse(localStorage.getItem('plenk_saved')||'[]'),
+    genTimer:null,
+  },
+
+  go(page){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-'+page).classList.add('active');
+    window.scrollTo(0,0);
+    ({home:()=>this.renderHome(),step1:()=>this.syncStep1(),step2:()=>this.syncStep2(),
+      result:()=>this.renderResult(),edit:()=>this.renderEdit(),saved:()=>this.renderSaved()})[page]?.();
+  },
+
+  renderHome(){
+    document.getElementById('region-grid').innerHTML=REGIONS.map(r=>`
+      <div class="region-card" style="background:${r.color}" onclick="App.pickRegion('${r.id}')">
+        <span class="re">${r.emoji}</span><h3>${r.name}</h3><p>${r.desc}</p>
+      </div>`).join('');
+  },
+
+  pickRegion(id){this.s.region=id;sessionStorage.setItem('plenk_r',id);this.go('step1');},
+
+  syncStep1(){
+    if(!this.s.region){const r=sessionStorage.getItem('plenk_r');if(r)this.s.region=r;}
+    document.getElementById('inp-region').value=this.s.region;
+    document.getElementById('inp-start').value=this.s.start;
+    document.getElementById('inp-end').value=this.s.end;
+    document.getElementById('cnt-adult').textContent=this.s.people.adult;
+    document.getElementById('cnt-child').textContent=this.s.people.child;
+    document.querySelectorAll('.transport-card').forEach(c=>c.classList.remove('selected'));
+    if(this.s.transport)document.querySelector(`.transport-card[data-t="${this.s.transport}"]`)?.classList.add('selected');
+  },
+
+  changeCount(type,d){
+    const min=type==='adult'?1:0;
+    this.s.people[type]=Math.max(min,Math.min(20,this.s.people[type]+d));
+    document.getElementById('cnt-'+type).textContent=this.s.people[type];
+  },
+
+  pickTransport(t,el){
+    document.querySelectorAll('.transport-card').forEach(c=>c.classList.remove('selected'));
+    el.classList.add('selected');this.s.transport=t;
+  },
+
+  validateStep1(){
+    this.s.region=document.getElementById('inp-region').value;
+    this.s.start=document.getElementById('inp-start').value;
+    this.s.end=document.getElementById('inp-end').value;
+    let ok=true;
+    const set=(id,show,msg)=>{const e=document.getElementById(id);if(msg)e.textContent=msg;e.classList.toggle('show',show);if(show)ok=false;};
+    set('err-region',!this.s.region);
+    if(!this.s.start||!this.s.end) set('err-dates',true,'여행기간을 선택해주세요.');
+    else if(this.s.end<this.s.start) set('err-dates',true,'종료일은 시작일보다 빠를 수 없습니다.');
+    else set('err-dates',false);
+    set('err-people',this.s.people.adult<1);
+    set('err-transport',!this.s.transport);
+    return ok;
+  },
+
+  nextStep2(){if(this.validateStep1())this.go('step2');},
+
+  syncStep2(){
+    document.getElementById('inp-age').value=this.s.ageGroup;
+    document.querySelectorAll('#style-chips .chip').forEach(c=>{
+      const m=c.getAttribute('onclick').match(/'([^']+)'/);
+      if(m)c.classList.toggle('selected',this.s.styles.includes(m[1]));
+    });
+    document.querySelectorAll('.budget-card').forEach(c=>c.classList.remove('selected'));
+    if(this.s.budget){const i={ECONOMY:0,NORMAL:1,LUXURY:2}[this.s.budget];document.querySelectorAll('.budget-card')[i]?.classList.add('selected');}
+    const ta=document.getElementById('inp-notes');
+    ta.value=this.s.notes;
+    document.getElementById('notes-count').textContent=ta.value.length;
+    ta.oninput=()=>{this.s.notes=ta.value;document.getElementById('notes-count').textContent=ta.value.length;};
+  },
+
+  toggleStyle(s,el){
+    const i=this.s.styles.indexOf(s);
+    if(i===-1){this.s.styles.push(s);el.classList.add('selected');}
+    else{this.s.styles.splice(i,1);el.classList.remove('selected');}
+  },
+
+  pickBudget(b,el){
+    document.querySelectorAll('.budget-card').forEach(c=>c.classList.remove('selected'));
+    el.classList.add('selected');this.s.budget=b;
+  },
+
+  validateStep2(){
+    let ok=true;
+    const set=(id,show)=>{document.getElementById(id).classList.toggle('show',show);if(show)ok=false;};
+    set('err-style',this.s.styles.length===0);
+    set('err-budget',!this.s.budget);
+    return ok;
+  },
+
+  createTrip(){
+    this.s.ageGroup=document.getElementById('inp-age').value;
+    this.s.notes=document.getElementById('inp-notes').value;
+    if(!this.validateStep2())return;
+    this.go('generating');
+    this.startGen();
+  },
+
+  startGen(){
+    const msgs=['추천 장소 수집 중...','관광지 동선 최적화 중...','맛집·카페 매칭 중...','숙소 후보 선정 중...','최종 일정 구성 중...'];
+    let step=0,prog=0;
+    const t=setInterval(()=>{
+      prog+=20;step++;
+      document.getElementById('gen-progress').style.width=prog+'%';
+      if(step<msgs.length)document.getElementById('gen-status-text').textContent=msgs[step];
+      if(prog>=100){clearInterval(t);this.s.genTimer=null;setTimeout(()=>{this.s.trip=this.buildTrip();this.go('result');},400);}
+    },700);
+    this.s.genTimer=t;
+  },
+
+  cancelGen(){
+    this.modal('일정 생성 취소','일정 생성을 취소하시겠습니까?',[
+      {label:'아니요',cls:'btn-ghost',fn:()=>this.closeModal()},
+      {label:'취소하기',cls:'btn-danger',fn:()=>{clearInterval(this.s.genTimer);this.closeModal();this.go('step2');}},
+    ]);
+  },
+
+  buildTrip(){
+    const reg=this.s.region||'SEOUL';
+    const pool=[...(PLACES[reg]||PLACES.SEOUL)].sort(()=>Math.random()-.5);
+    const days=this.s.start&&this.s.end?daysBetween(this.s.start,this.s.end):2;
+    let pi=0;
+    const itinerary=Array.from({length:days},(_,i)=>{
+      const places=[];
+      const count=Math.min(3+Math.floor(Math.random()*2),pool.length-pi);
+      for(let j=0;j<count&&pi<pool.length;j++,pi++)places.push({...pool[pi],time:TIMES[j]||`${9+j*2}:00`});
+      return {day:i+1,places};
+    });
+    const ri=REGIONS.find(r=>r.id===reg)||{name:'여행지'};
+    return {id:'t'+Date.now(),title:`${ri.name} ${days-1}박 ${days}일`,region:reg,start:this.s.start,end:this.s.end,people:{...this.s.people},transport:this.s.transport,itinerary,saved:false,savedAt:null};
+  },
+
+  renderResult(){
+    const t=this.s.trip;if(!t){this.go('home');return;}
+    document.getElementById('result-title').textContent=t.title;
+    document.getElementById('result-meta').textContent=`${fmt(t.start)} ~ ${fmt(t.end)} · 성인 ${t.people.adult}명${t.people.child>0?` · 아동 ${t.people.child}명`:''} · ${TL[t.transport]||''}`;
+    const btn=document.getElementById('save-btn');
+    btn.textContent=t.saved?'저장됨 ✓':'저장하기';btn.disabled=t.saved;
+    document.getElementById('result-content').innerHTML=t.itinerary.map(day=>`
+      <div class="day-section">
+        <div class="day-label">DAY ${day.day}</div>
+        ${day.places.map(p=>`
+          <div class="place-card" onclick="App.openPlace('${p.id}')">
+            <div class="place-thumb" style="background:${p.bg}">${p.emoji}</div>
+            <div class="place-info">
+              <div class="place-name">${p.name}</div>
+              <div class="place-meta">${p.time} · 약 ${p.dur}분 · ${p.cat}</div>
+            </div>
+            <div class="place-actions">
+              <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();App.swapPlace('${p.id}')">변경</button>
+            </div>
+          </div>`).join('')}
+      </div>`).join('');
+  },
+
+  openPlace(id){
+    const p=ALL_PLACES.find(x=>x.id===id);if(!p)return;
+    this.s.place=p;
+    const img=document.getElementById('place-image');
+    img.style.background=p.bg;img.textContent=p.emoji;
+    document.getElementById('place-detail').innerHTML=`
+      <h2 style="font-size:22px;font-weight:800;margin-bottom:4px">${p.name}</h2>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:20px">${p.addr}</p>
+      <div class="info-row"><span class="info-label">운영시간</span>${p.hours}</div>
+      <div class="info-row"><span class="info-label">예상 비용</span>${p.cost}</div>
+      <div class="info-row"><span class="info-label">체류 시간</span>약 ${p.dur}분</div>
+      <div class="info-row" style="border-bottom:none"><span class="info-label">카테고리</span>${p.cat}</div>
+      <p style="margin:20px 0;font-size:15px;line-height:1.7;color:#374151">${p.desc}</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
+        <button class="btn btn-secondary" onclick="App.removePlace('${p.id}')">일정에서 제외</button>
+        <button class="btn btn-primary" onclick="App.go('result')">일정으로 돌아가기</button>
+      </div>`;
+    this.go('place');
+  },
+
+  openMap(){
+    const p=this.s.place;
+    if(p)window.open(`https://map.kakao.com/link/search/${encodeURIComponent(p.name+' '+p.addr)}`,'_blank');
+  },
+
+  removePlace(id){
+    if(!this.s.trip)return;
+    this.s.trip.itinerary.forEach(d=>{d.places=d.places.filter(p=>p.id!==id);});
+    this.toast('장소가 일정에서 제외되었습니다.');
+    this.go('result');
+  },
+
+  swapPlace(id){
+    const t=this.s.trip;const reg=t.region;
+    const used=t.itinerary.flatMap(d=>d.places.map(p=>p.id));
+    const pool=(PLACES[reg]||[]).filter(p=>p.id!==id&&!used.includes(p.id));
+    if(!pool.length){this.toast('대체 가능한 장소가 없습니다.','error');return;}
+    const neo=pool[Math.floor(Math.random()*pool.length)];
+    t.itinerary.forEach(d=>{const i=d.places.findIndex(p=>p.id===id);if(i!==-1)d.places[i]={...neo,time:d.places[i].time};});
+    this.renderResult();this.toast(`${neo.name}(으)로 변경했습니다.`);
+  },
+
+  saveTrip(){
+    const t=this.s.trip;if(!t)return;
+    t.saved=true;t.savedAt=new Date().toISOString().split('T')[0];
+    const i=this.s.saved.findIndex(x=>x.id===t.id);
+    if(i===-1)this.s.saved.push({...t});else this.s.saved[i]={...t};
+    localStorage.setItem('plenk_saved',JSON.stringify(this.s.saved));
+    document.getElementById('save-btn').textContent='저장됨 ✓';
+    document.getElementById('save-btn').disabled=true;
+    this.toast('일정이 저장되었습니다.','success');
+  },
+
+  shareTrip(){
+    navigator.clipboard?.writeText(location.href).then(()=>this.toast('공유 링크가 복사되었습니다.','success')).catch(()=>this.toast('공유 기능을 지원하지 않는 브라우저입니다.'));
+  },
+
+  regenTrip(){this.s.trip=null;this.go('generating');this.startGen();},
+
+  renderEdit(){
+    const t=this.s.trip;if(!t){this.go('result');return;}
+    document.getElementById('edit-content').innerHTML=t.itinerary.map((day,di)=>`
+      <div class="day-section">
+        <div class="day-label">DAY ${day.day}</div>
+        <div id="elist-${di}">
+          ${day.places.map((p,pi)=>`
+            <div class="edit-item" draggable="true" data-di="${di}" data-pi="${pi}" data-id="${p.id}"
+                 ondragstart="App.dragStart(event)" ondragover="App.dragOver(event)" ondrop="App.dragDrop(event,${di})"
+                 ondragend="App.dragEnd(event)">
+              <span class="drag-handle">⠿</span>
+              <div class="edit-item-info">
+                <div class="edit-item-name">${p.emoji} ${p.name}</div>
+                <div class="edit-item-time">${p.time} · 약 ${p.dur}분</div>
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="App.removePlace('${p.id}');App.renderEdit()">삭제</button>
+            </div>`).join('')}
+        </div>
+      </div>`).join('');
+  },
+
+  _drag:null,
+  dragStart(e){this._drag={di:+e.currentTarget.dataset.di,pi:+e.currentTarget.dataset.pi};e.currentTarget.classList.add('dragging');},
+  dragOver(e){e.preventDefault();},
+  dragEnd(e){e.currentTarget.classList.remove('dragging');},
+  dragDrop(e,toDi){
+    e.preventDefault();if(!this._drag)return;
+    const {di:fromDi,pi:fromPi}=this._drag;
+    const [moved]=this.s.trip.itinerary[fromDi].places.splice(fromPi,1);
+    const target=e.target.closest('.edit-item');
+    if(target)this.s.trip.itinerary[toDi].places.splice(+target.dataset.pi,0,moved);
+    else this.s.trip.itinerary[toDi].places.push(moved);
+    this._drag=null;this.renderEdit();
+  },
+
+  finishEdit(){
+    this.s.trip.saved=false;this.s.trip.savedAt=null;
+    document.getElementById('save-btn').textContent='저장하기';
+    document.getElementById('save-btn').disabled=false;
+    this.toast('일정이 수정되었습니다.');this.go('result');
+  },
+
+  renderSaved(){
+    const el=document.getElementById('saved-content');
+    if(!this.s.saved.length){
+      el.innerHTML=`<div class="empty-state"><div class="empty-icon">🗺️</div><div class="empty-title">저장한 일정이 없습니다</div><div class="empty-desc">여행 일정을 만들고 저장해보세요!</div><button class="btn btn-primary" onclick="App.go('step1')">여행 일정 만들기</button></div>`;
+      return;
+    }
+    el.innerHTML=this.s.saved.map(t=>`
+      <div class="saved-card">
+        <div><div class="saved-title">${t.title}</div><div class="saved-meta">${fmt(t.start)} ~ ${fmt(t.end)} · 저장일 ${t.savedAt||'-'}</div></div>
+        <div class="saved-actions">
+          <button class="btn btn-secondary btn-sm" onclick="App.viewSaved('${t.id}')">보기</button>
+          <button class="btn btn-danger btn-sm" onclick="App.deleteSaved('${t.id}')">삭제</button>
+        </div>
+      </div>`).join('');
+  },
+
+  viewSaved(id){
+    const t=this.s.saved.find(x=>x.id===id);
+    if(t){this.s.trip=JSON.parse(JSON.stringify(t));this.go('result');}
+  },
+
+  deleteSaved(id){
+    this.modal('일정 삭제','이 일정을 삭제하시겠습니까?',[
+      {label:'취소',cls:'btn-ghost',fn:()=>this.closeModal()},
+      {label:'삭제',cls:'btn-danger',fn:()=>{
+        this.s.saved=this.s.saved.filter(x=>x.id!==id);
+        localStorage.setItem('plenk_saved',JSON.stringify(this.s.saved));
+        this.closeModal();this.renderSaved();this.toast('일정이 삭제되었습니다.');
+      }},
+    ]);
+  },
+
+  loginPrompt(){
+    this.modal('로그인','로그인 기능은 현재 준비 중입니다.\n로그인 없이도 일정을 만들고 저장할 수 있습니다.',[
+      {label:'확인',cls:'btn-primary',fn:()=>this.closeModal()},
+    ]);
+  },
+
+  _mfns:[],
+  modal(title,desc,actions){
+    document.getElementById('modal-title').textContent=title;
+    document.getElementById('modal-desc').textContent=desc;
+    this._mfns=actions.map(a=>a.fn);
+    document.getElementById('modal-actions').innerHTML=actions.map((a,i)=>`<button class="btn ${a.cls} btn-sm" onclick="App._mfns[${i}]()">${a.label}</button>`).join('');
+    document.getElementById('modal-overlay').classList.add('show');
+  },
+  closeModal(){document.getElementById('modal-overlay').classList.remove('show');},
+
+  _tt:null,
+  toast(msg,type=''){
+    const el=document.getElementById('toast');
+    el.textContent=msg;el.className='show'+(type?' '+type:'');
+    clearTimeout(this._tt);
+    this._tt=setTimeout(()=>{el.className='';},3000);
+  },
+};
+
+App.renderHome();
+document.getElementById('modal-overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)App.closeModal();});
+</script>
+</body>
+</html>
